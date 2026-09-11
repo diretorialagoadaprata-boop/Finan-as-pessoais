@@ -1,11 +1,13 @@
 package br.com.financasfacil.v2;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.view.WindowInsets;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -28,11 +30,32 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                view.evaluateJavascript("(function(){if(document.getElementById('ff-compat-script'))return;var s=document.createElement('script');s.id='ff-compat-script';s.src='compat.js?v=3';document.head.appendChild(s);})();", null);
+                applyAndroidSafeArea(view);
             }
         });
 
         webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    private void applyAndroidSafeArea(final WebView view) {
+        view.post(new Runnable() {
+            @Override public void run() {
+                int bottomPx = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    WindowInsets insets = view.getRootWindowInsets();
+                    if (insets != null) bottomPx = insets.getSystemWindowInsetBottom();
+                }
+                float density = getResources().getDisplayMetrics().density;
+                int bottomDp = Math.max(18, Math.round(bottomPx / Math.max(1f, density)));
+                String js = "(function(){" +
+                    "var l=document.getElementById('ff-safe-css');" +
+                    "if(!l){l=document.createElement('link');l.id='ff-safe-css';l.rel='stylesheet';l.href='safe-area.css?v=5';document.head.appendChild(l);}" +
+                    "document.documentElement.style.setProperty('--android-safe-bottom','" + bottomDp + "px');" +
+                    "if(!document.getElementById('ff-compat-script')){var s=document.createElement('script');s.id='ff-compat-script';s.src='compat.js?v=5';document.head.appendChild(s);}" +
+                    "})();";
+                view.evaluateJavascript(js, null);
+            }
+        });
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
