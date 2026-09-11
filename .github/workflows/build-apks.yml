@@ -1,4 +1,4 @@
-name: Build Financas Facil V1 APK
+name: Build Financas Facil V1 Release
 
 on:
   workflow_dispatch:
@@ -24,13 +24,20 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build V1 APK
-        run: gradle :v1:assembleDebug --stacktrace
-      - name: Rename APK
-        run: cp "v1/build/outputs/apk/debug/v1-debug.apk" "FinancasFacil-V1.apk"
-      - name: Upload V1 APK
+      - name: Build unsigned release
+        run: gradle :v1:assembleRelease --stacktrace
+      - name: Align unsigned APK
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -f -p 4 \
+            v1/build/outputs/apk/release/v1-release-unsigned.apk \
+            FinancasFacil-V1-unsigned-aligned.apk
+      - name: Copy Android signing tool
+        run: cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" apksigner.jar
+      - name: Upload unsigned release and signing tool
         uses: actions/upload-artifact@v4
         with:
-          name: FinancasFacil-V1.apk
-          path: FinancasFacil-V1.apk
+          name: FinancasFacil-V1-release-kit
+          path: |
+            FinancasFacil-V1-unsigned-aligned.apk
+            apksigner.jar
           if-no-files-found: error
