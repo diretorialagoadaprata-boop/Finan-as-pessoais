@@ -1,0 +1,1 @@
+:root{--android-safe-bottom:24px}.bottom{bottom:calc(var(--android-safe-bottom,24px) + 8px);border-radius:16px 16px 0 0;box-shadow:0 -8px 26px rgba(20,48,82,.10)}main{padding-bottom:calc(104px + var(--android-safe-bottom,24px))}@media(max-width:520px){.bottom{bottom:calc(var(--android-safe-bottom,24px) + 8px)}}
