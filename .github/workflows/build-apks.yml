@@ -1,4 +1,4 @@
-name: Build Financas Facil APKs
+name: Build Financas Facil V1 APK
 
 on:
   workflow_dispatch:
@@ -6,12 +6,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-v1:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        app: [v1, v2]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,17 +24,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build APK
-        run: gradle :${{ matrix.app }}:assembleDebug --stacktrace
+      - name: Build V1 APK
+        run: gradle :v1:assembleDebug --stacktrace
       - name: Rename APK
-        shell: bash
-        run: |
-          if [ "${{ matrix.app }}" = "v1" ]; then NAME="FinancasFacil-V1.apk"; else NAME="FinancasFacil-V2.apk"; fi
-          cp "${{ matrix.app }}/build/outputs/apk/debug/${{ matrix.app }}-debug.apk" "$NAME"
-          echo "APK_NAME=$NAME" >> "$GITHUB_ENV"
-      - name: Upload APK
+        run: cp "v1/build/outputs/apk/debug/v1-debug.apk" "FinancasFacil-V1.apk"
+      - name: Upload V1 APK
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APK_NAME }}
-          path: ${{ env.APK_NAME }}
+          name: FinancasFacil-V1.apk
+          path: FinancasFacil-V1.apk
           if-no-files-found: error
