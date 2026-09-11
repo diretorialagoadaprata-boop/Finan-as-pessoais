@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b4f9c" />
+  <meta name="description" content="Finanças Fácil — planejamento financeiro de longo prazo." />
+  <title>Finanças Fácil V1</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">F</div><div><strong>Finanças Fácil</strong><span>Planejamento financeiro</span></div></div>
+    </header>
+    <main>
+      <section class="screen active" id="screen-home" data-screen="home">
+        <div class="hero-card"><div><span class="eyebrow">Seu planejamento</span><h1 id="heroNetWorth">R$ 0,00</h1><p>Patrimônio projetado em <strong id="heroYears">30 anos</strong></p></div><div class="hero-badge" id="heroBadge">Configure seus dados</div></div>
+        <div class="period-switch"><button type="button" data-years="1">1 ano</button><button type="button" data-years="5">5 anos</button><button type="button" data-years="10">10 anos</button><button type="button" data-years="20">20 anos</button><button type="button" data-years="30" class="active">30 anos</button></div>
+        <div class="kpi-grid">
+          <article class="kpi-card income"><span>Renda líquida média</span><strong id="kpiIncome">R$ 0,00</strong><small>primeiros 12 meses</small></article>
+          <article class="kpi-card expense"><span>Despesas médias</span><strong id="kpiExpenses">R$ 0,00</strong><small>primeiros 12 meses</small></article>
+          <article class="kpi-card balance"><span>Sobra média</span><strong id="kpiBalance">R$ 0,00</strong><small>primeiros 12 meses</small></article>
+          <article class="kpi-card patrimony"><span>Patrimônio atual</span><strong id="kpiCurrent">R$ 0,00</strong><small>saldo + FGTS + imóvel</small></article>
+        </div>
+        <article class="panel chart-panel"><div class="panel-heading"><div><span class="eyebrow">Evolução</span><h2>Patrimônio ao longo do tempo</h2></div></div><div class="chart-wrap"><canvas id="wealthChart"></canvas><div id="chartEmpty" class="chart-empty">Preencha seus dados para ver a projeção.</div></div></article>
+        <article class="panel expense-analysis-panel"><div class="panel-heading"><div><span class="eyebrow">Análise mensal</span><h2>Para onde vai seu dinheiro</h2><p>Distribuição das despesas gerais do mês base.</p></div><strong id="expensePieTotal" class="expense-total">R$ 0,00</strong></div><div class="expense-analysis-grid"><div class="pie-wrap"><canvas id="expensePieChart"></canvas><div id="expensePieEmpty" class="pie-empty">Cadastre despesas para visualizar a distribuição.</div></div><div id="expensePieLegend" class="pie-legend"></div></div><p class="panel-note">Os descontos em folha aparecem detalhados na aba <strong>Salário</strong>.</p></article>
+        <article class="panel summary-panel"><div class="panel-heading"><div><span class="eyebrow">Composição</span><h2>De onde vem seu patrimônio</h2></div></div><div class="composition-list"><div><span>Investimentos / caixa</span><strong id="compCash">R$ 0,00</strong></div><div><span>FGTS</span><strong id="compFgts">R$ 0,00</strong></div><div><span>Imóvel</span><strong id="compProperty">R$ 0,00</strong></div></div></article>
+      </section>
+
+      <section class="screen" id="screen-income" data-screen="income"><div class="screen-title"><div><span class="eyebrow">Entradas</span><h1>Receitas</h1><p>Cadastre suas rendas e os parâmetros usados no planejamento.</p></div></div>
+        <form id="incomeForm" class="form-stack" autocomplete="off">
+          <article class="panel form-card"><h2>Renda assalariada</h2><div class="field-grid two">
+            <label class="field"><span>Salário bruto mensal</span><div class="money-input"><span>R$</span><input id="salary" inputmode="decimal" type="number" min="0" step="0.01" /></div></label>
+            <label class="field"><span>Nº de dependentes</span><input id="dependents" inputmode="numeric" type="number" min="0" step="1" /></label>
+            <label class="field"><span>Mês de férias</span><select id="vacationMonth"><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select></label>
+            <label class="field"><span>Aumento real anual do salário</span><div class="suffix-input"><input id="salaryGrowth" inputmode="decimal" type="number" step="0.01" /><span>%</span></div></label>
+          </div></article>
+          <article class="panel form-card"><div class="panel-heading compact"><div><h2>Outras rendas líquidas</h2><p>Valores já descontados de impostos e taxas.</p></div><button class="btn secondary small" id="addIncomeBtn" type="button">+ Adicionar</button></div><div id="otherIncomeList" class="dynamic-list"></div></article>
+          <article class="panel form-card"><h2>Patrimônio e rentabilidade</h2><div class="field-grid two">
+            <label class="field"><span>Saldo inicial em conta / investimentos</span><div class="money-input"><span>R$</span><input id="initialCash" type="number" min="0" step="0.01" /></div></label>
+            <label class="field"><span>Rentabilidade anual</span><div class="suffix-input"><input id="investmentRate" type="number" step="0.01" /><span>%</span></div></label>
+            <label class="field"><span>Saldo inicial do FGTS</span><div class="money-input"><span>R$</span><input id="initialFgts" type="number" min="0" step="0.01" /></div></label>
+            <label class="field"><span>Rentabilidade anual do FGTS</span><div class="suffix-input"><input id="fgtsRate" type="number" step="0.01" /><span>%</span></div></label>
+            <label class="field"><span>Valor atual em imóveis</span><div class="money-input"><span>R$</span><input id="propertyValue" type="number" min="0" step="0.01" /></div></label>
+            <label class="field"><span>Valorização anual dos imóveis</span><div class="suffix-input"><input id="propertyRate" type="number" step="0.01" /><span>%</span></div></label>
+            <label class="field"><span>Data de início</span><input id="startDate" type="date" /></label>
+          </div></article>
+        </form>
+      </section>
+
+      <section class="screen" id="screen-salary" data-screen="salary"><div class="screen-title"><div><span class="eyebrow">Folha de pagamento</span><h1>Salário</h1><p>Veja como o salário bruto se transforma em salário líquido e quanto é depositado mensalmente no FGTS.</p></div></div>
+        <article class="salary-hero panel"><div class="salary-flow"><div class="salary-flow-item gross"><span>Salário bruto</span><strong id="salaryGross">R$ 0,00</strong></div><div class="salary-flow-arrow">−</div><div class="salary-flow-item deductions"><span>Descontos totais</span><strong id="salaryDeductions">R$ 0,00</strong></div><div class="salary-flow-arrow">=</div><div class="salary-flow-item net"><span>Salário líquido</span><strong id="salaryNet">R$ 0,00</strong></div></div><p class="salary-helper">Estimativa para um mês normal, sem 13º e adicional de férias.</p></article>
+        <div class="salary-kpi-grid"><article class="salary-kpi"><span>INSS</span><strong id="salaryInss">R$ 0,00</strong><small>desconto do trabalhador</small></article><article class="salary-kpi"><span>IR</span><strong id="salaryIr">R$ 0,00</strong><small>imposto estimado</small></article><article class="salary-kpi"><span>Descontos em folha</span><strong id="salaryPayroll">R$ 0,00</strong><small>itens cadastrados</small></article><article class="salary-kpi fgts"><span>FGTS mensal</span><strong id="salaryFgts">R$ 0,00</strong><small>depósito de 8% — não reduz o líquido</small></article></div>
+        <article class="panel payroll-breakdown"><div class="panel-heading"><div><span class="eyebrow">Detalhamento</span><h2>Do bruto ao líquido</h2></div></div><div class="salary-breakdown-list"><div class="salary-line positive"><span>Salário bruto</span><strong id="breakGross">R$ 0,00</strong></div><div class="salary-line negative"><span>INSS</span><strong id="breakInss">− R$ 0,00</strong></div><div class="salary-line negative"><span>IR</span><strong id="breakIr">− R$ 0,00</strong></div><div id="salaryPayrollDetails"></div><div class="salary-line total"><span>Salário líquido estimado</span><strong id="breakNet">R$ 0,00</strong></div></div></article>
+        <article class="panel fgts-explainer"><div class="fgts-badge">FGTS</div><div><h2>FGTS não é desconto do seu salário</h2><p>O depósito mensal compõe seu patrimônio, mas não é retirado do valor líquido que você recebe.</p></div><strong id="fgtsMonthlyHighlight">R$ 0,00/mês</strong></article>
+      </section>
+
+      <section class="screen" id="screen-expenses" data-screen="expenses"><div class="screen-title"><div><span class="eyebrow">Saídas</span><h1>Despesas</h1><p>Organize descontos em folha e despesas mensais.</p></div></div>
+        <article class="panel form-card"><div class="panel-heading compact"><div><h2>Descontos em folha</h2><p>Ex.: plano de saúde, empréstimo consignado.</p></div><button class="btn secondary small" id="addPayrollBtn" type="button">+ Adicionar</button></div><div id="payrollList" class="dynamic-list"></div></article>
+        <article class="panel form-card"><div class="panel-heading compact"><div><h2>Despesas gerais</h2><p>Moradia, alimentação, transporte e demais gastos.</p></div><button class="btn secondary small" id="addExpenseBtn" type="button">+ Adicionar</button></div><div id="expenseList" class="dynamic-list"></div></article>
+        <article class="panel form-card"><h2>Inflação</h2><div class="field-grid two"><label class="field"><span>Inflação anual estimada</span><div class="suffix-input"><input id="inflationRate" type="number" step="0.01" /><span>%</span></div></label></div></article>
+      </section>
+
+      <section class="screen" id="screen-plan" data-screen="plan"><div class="screen-title"><div><span class="eyebrow">Detalhamento</span><h1>Planejamento</h1><p>Confira o resultado ano a ano e os principais componentes da projeção.</p></div></div><article class="panel result-highlight"><span>Patrimônio projetado em 30 anos</span><strong id="planTotal">R$ 0,00</strong><small id="planDelta">Preencha os dados para calcular.</small></article><article class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Ano</th><th>Patrimônio</th><th>Investimentos</th><th>FGTS</th><th>Imóvel</th><th>Sobra média/mês</th></tr></thead><tbody id="annualTable"></tbody></table></div></article></section>
+      <section class="screen" id="screen-settings" data-screen="settings"><div class="screen-title"><div><span class="eyebrow">Controle</span><h1>Dados e ajustes</h1><p>Faça backup, restaure ou reinicie o planejamento.</p></div></div><article class="panel form-card"><h2>Backup</h2><div class="action-grid"><button type="button" class="btn primary" id="exportBtn">Exportar dados</button><label class="btn secondary file-btn">Importar dados<input type="file" id="importInput" accept="application/json,.json" /></label></div></article><article class="panel form-card danger-zone"><h2>Reiniciar planejamento</h2><button type="button" class="btn danger" id="resetBtn">Apagar meus dados</button></article></section>
+    </main>
+    <nav class="bottom-nav"><button class="nav-item active" type="button" data-target="home"><span>⌂</span><small>Início</small></button><button class="nav-item" type="button" data-target="income"><span>＋</span><small>Receitas</small></button><button class="nav-item" type="button" data-target="salary"><span>R$</span><small>Salário</small></button><button class="nav-item" type="button" data-target="expenses"><span>−</span><small>Despesas</small></button><button class="nav-item" type="button" data-target="plan"><span>▥</span><small>Plano</small></button><button class="nav-item" type="button" data-target="settings"><span>⚙</span><small>Ajustes</small></button></nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
